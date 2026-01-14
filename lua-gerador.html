@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador Script AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 15px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #1a1a2e;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        .content {
+            padding: 20px;
+        }
+        .input-section {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            color: white;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        #prompt {
+            width: 100%;
+            padding: 15px;
+            background: #0f1419;
+            color: white;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-family: Arial;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 80px;
+        }
+        #prompt:focus {
+            outline: none;
+            border-color: #764ba2;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .btn-generate {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 2;
+        }
+        .btn-generate:active {
+            transform: scale(0.95);
+        }
+        .btn-copy {
+            background: #28a745;
+            color: white;
+            flex: 1;
+        }
+        .btn-download {
+            background: #17a2b8;
+            color: white;
+            flex: 1;
+        }
+        .btn-clear {
+            background: #dc3545;
+            color: white;
+            flex: 1;
+        }
+        #output {
+            width: 100%;
+            height: 450px;
+            padding: 15px;
+            background: #0f1419;
+            color: #00ff00;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+        #output:focus {
+            outline: none;
+            border-color: #764ba2;
+        }
+        .examples {
+            background: #16213e;
+            border-left: 4px solid #667eea;
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            color: #ccc;
+            font-size: 12px;
+        }
+        .examples strong {
+            color: white;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .loading {
+            text-align: center;
+            padding: 15px;
+            color: #667eea;
+            font-weight: bold;
+            display: none;
+        }
+        .loading.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Gerador de Scripts com IA</h1>
+            <p>Descreva o script que você quer e deixe a IA criar</p>
+        </div>
+        
+        <div class="content">
+            <div class="examples">
+                <strong>💡 Exemplos de comandos:</strong>
+                • "speed hack com ui" • "fly hack" • "teleport" • "esp" • "god mode" • "noclip" • "infinite jump" • "aimbot" • "btools" • "kill aura" • "wallhack" • "xray" • "full bright" • "anti kick" • "anti afk" • "chat spam" • "auto farm"
+            </div>
+
+            <div class="input-section">
+                <label for="prompt">📝 Descreva o script:</label>
+                <textarea id="prompt" placeholder="Ex: speed hack com ui"></textarea>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-generate" onclick="gerarScript()">✨ Gerar</button>
+                <button class="btn btn-copy" onclick="copiarScript()">📋 Copiar</button>
+                <button class="btn btn-download" onclick="baixarScript()">💾 Baixar</button>
+                <button class="btn btn-clear" onclick="limparTudo()">🗑️ Limpar</button>
+            </div>
+
+            <div class="loading" id="loading">⏳ Gerando...</div>
+
+            <label for="output">💻 Script:</label>
+            <textarea id="output" placeholder="Seu script aparecerá aqui..."></textarea>
+        </div>
+    </div>
+
+    <script>
+        function getScript(tipo) {
+            const db = {
+                speed: '-- Speed Hack\\nlocal s=50;local p=game.Players.LocalPlayer;local g=Instance.new("ScreenGui");local f=Instance.new("Frame");local b=Instance.new("TextButton");g.Parent=game.CoreGui;f.Parent=g;f.BackgroundColor3=Color3.fromRGB(30,30,30);f.Position=UDim2.new(0.5,-100,0.5,-50);f.Size=UDim2.new(0,200,0,100);b.Parent=f;b.Position=UDim2.new(0.1,0,0.3,0);b.Size=UDim2.new(0.8,0,0,40);b.Text="Speed: "..s;b.TextColor3=Color3.fromRGB(255,255,255);b.MouseButton1Click:Connect(function() s=s+10;if s>200 then s=16 end;b.Text="Speed: "..s;if p.Character and p.Character:FindFirstChild("Humanoid")then p.Character.Humanoid.WalkSpeed=s end end)',
+                
+                fly: '-- Fly Hack\\nlocal f=false;local s=50;local p=game.Players.LocalPlayer;local g=Instance.new("ScreenGui");local t=Instance.new("TextButton");g.Parent=game.CoreGui;t.Parent=g;t.Position=UDim2.new(0.5,-75,0.5,-25);t.Size=UDim2.new(0,150,0,50);t.Text="Fly: OFF";t.TextColor3=Color3.fromRGB(255,255,255);local bv=Instance.new("BodyVelocity");bv.Parent=p.Character.HumanoidRootPart;t.MouseButton1Click:Connect(function() f=not f;t.Text=f and "Fly: ON" or "Fly: OFF";bv.MaxForce=f and Vector3.new(9e9,9e9,9e9)or Vector3.new(0,0,0)end);game:GetService("RunService").Heartbeat:Connect(function()if f then local c=workspace.CurrentCamera;local d=p.Character.Humanoid.MoveDirection;bv.Velocity=((c.CFrame.LookVector*d.Z)+(c.CFrame.RightVector*d.X))*s end end)',
+                
+                teleport: '-- Teleport\\nlocal p=game.Players.LocalPlayer;local pos={};local g=Instance.new("ScreenGui");local f=Instance.new("Frame");local s1=Instance.new("TextButton");local t1=Instance.new("TextButton");g.Parent=game.CoreGui;f.Parent=g;f.Size=UDim2.new(0,200,0,150);f.Position=UDim2.new(0.5,-100,0.5,-75);f.BackgroundColor3=Color3.fromRGB(30,30,30);s1.Parent=f;s1.Size=UDim2.new(0.8,0,0,30);s1.Position=UDim2.new(0.1,0,0.2,0);s1.Text="Salvar Pos";s1.TextColor3=Color3.fromRGB(255,255,255);t1.Parent=f;t1.Size=UDim2.new(0.8,0,0,30);t1.Position=UDim2.new(0.1,0,0.5,0);t1.Text="TP Pos";t1.TextColor3=Color3.fromRGB(255,255,255);s1.MouseButton1Click:Connect(function()pos.p1=p.Character.HumanoidRootPart.Position end);t1.MouseButton1Click:Connect(function()if pos.p1 then p.Character.HumanoidRootPart.CFrame=CFrame.new(pos.p1)end end)',
+                
+                esp: '-- ESP\\nfor _,p in pairs(game.Players:GetPlayers())do if p~=game.Players.LocalPlayer and p.Character then local h=Instance.new("Highlight");h.FillColor=Color3.fromRGB(255,0,0);h.FillTransparency=0.5;h.OutlineColor=Color3.fromRGB(255,255,255);h.Parent=p.Character end end',
+                
+                god: '-- God Mode\\nlocal p=game.Players.LocalPlayer;local e=false;local g=Instance.new("ScreenGui");local t=Instance.new("TextButton");g.Parent=game.CoreGui;t.Parent=g;t.Size=UDim2.new(0,150,0,50);t.Position=UDim2.new(0.5,-75,0.5,-25);t.Text="God: OFF";t.TextColor3=Color3.fromRGB(255,255,255);t.MouseButton1Click:Connect(function()e=not e;t.Text=e and "God: ON" or "God: OFF";if e then p.Character.Humanoid.MaxHealth=math.huge;p.Character.Humanoid.Health=math.huge else p.Character.Humanoid.MaxHealth=100;p.Character.Humanoid.Health=100 end end)',
+                
+                noclip: '-- NoClip\\nlocal e=false;local p=game.Players.LocalPlayer;local g=Instance.new("ScreenGui");local t=Instance.new("TextButton");g.Parent=game.CoreGui;t.Parent=g;t.Size=UDim2.new(0,150,0,50);t.Position=UDim2.new(0.5,-75,0.5,-25);t.Text="NoClip: OFF";t.TextColor3=Color3.fromRGB(255,255,255);t.MouseButton1Click:Connect(function()e=not e;t.Text=e and "NoClip: ON" or "NoClip: OFF"end);game:GetService("RunService").Stepped:Connect(function()if e and p.Character then for _,v in pairs(p.Character:GetDescendants())do if v:IsA("BasePart")then v.CanCollide=false end end end end)',
+                
+                jump: '-- Infinite Jump\\nlocal p=game.Players.LocalPlayer;game:GetService("UserInputService").JumpRequest:Connect(function()if p.Character and p.Character:FindFirstChild("Humanoid")then p.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)end end)',
+                
+                aimbot: '-- Aimbot\\nlocal e=false;local f=200;local p=game.Players.LocalPlayer;local c=workspace.CurrentCamera;local g=Instance.new("ScreenGui");local t=Instance.new("TextButton");g.Parent=game.CoreGui;t.Parent=g;t.Size=UDim2.new(0,150,0,50);t.Position=UDim2.new(0.5,-75,0.1,0);t.Text="Aim: OFF";t.TextColor3=Color3.fromRGB(255,255,255);t.MouseButton1Click:Connect(function()e=not e;t.Text=e and "Aim: ON" or "Aim: OFF"end);game:GetService("RunService").RenderStepped:Connect(function()if e then local closest,dist=nil,f;for _,pl in pairs(game.Players:GetPlayers())do if pl~=p and pl.Character and pl.Character:FindFirstChild("Head")then local pos,vis=c:WorldToViewportPoint(pl.Character.Head.Position);if vis then local m=p:GetMouse();local d=(Vector2.new(m.X,m.Y)-Vector2.new(pos.X,pos.Y)).Magnitude;if d<dist then closest=pl.Character.Head;dist=d end end end end;if closest then c.CFrame=CFrame.new(c.CFrame.Position,closest.Position)end end end)',
+                
+                btools: '-- BTools\\nlocal p=game.Players.LocalPlayer;local m=p:GetMouse();local mode="none";local g=Instance.new("ScreenGui");local f=Instance.new("Frame");local d=Instance.new("TextButton");local cp=Instance.new("TextButton");g.Parent=game.CoreGui;f.Parent=g;f.Size=UDim2.new(0,200,0,120);f.Position=UDim2.new(0.5,-100,0.1,0);f.BackgroundColor3=Color3.fromRGB(30,30,30);d.Parent=f;d.Size=UDim2.new(0.8,0,0,30);d.Position=UDim2.new(0.1,0,0.15,0);d.Text="Delete";d.TextColor3=Color3.fromRGB(255,255,255);cp.Parent=f;cp.Size=UDim2.new(0.8,0,0,30);cp.Position=UDim2.new(0.1,0,0.55,0);cp.Text="Copy";cp.TextColor3=Color3.fromRGB(255,255,255);d.MouseButton1Click:Connect(function()mode="delete"end);cp.MouseButton1Click:Connect(function()mode="copy"end);m.Button1Down:Connect(function()local t=m.Target;if t and mode=="delete"then t:Destroy()elseif t and mode=="copy"then local c=t:Clone();c.Parent=t.Parent;c.Position=t.Position+Vector3.new(5,0,0)end end)',
+                
+                killaura: '-- Kill Aura\\nlocal e=false;local r=20;local p=game.Players.LocalPlayer;local g=Instance.new("ScreenGui");local t=Instance.new("TextButton");g.Parent=game.CoreGui;t.Parent=g;t.Size=UDim2.new(0,150,0,50);t.Position=UDim2.new(0.5,-75,0.2,0);t.Text="KillAura: OFF";t.TextColor3=Color3.fromRGB(255,255,255);t.MouseButton1Click:Connect(function()e=not e;t.Text=e and "KillAura: ON" or "KillAura: OFF"end);game:GetService("RunService").Heartbeat:Connect(function()if e and p.Character and p.Character:FindFirstChild("HumanoidRootPart")then for _,pl in pairs(game.Players:GetPlayers())do if pl~=p and pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")then local d=(p.Character.HumanoidRootPart.Position-pl.Character.HumanoidRootPart.Position).Magnitude;if d<=r and pl.Character:FindFirstChild("Humanoid")then pl.Character.Humanoid.Health=0 end end end end end)',
+                
+                wallhack: '-- Wallhack\\nfor _,p in pairs(game.Players:GetPlayers())do if p~=game.Players.LocalPlayer and p.Character then for _,v in pairs(p.Character:GetDescendants())do if v:IsA("BasePart")then v.Transparency=0.5;v.Material=Enum.Material.Neon;v.Color=Color3.fromRGB(255,0,0)end end end end',
+                
+                xray: '-- X-Ray\\nfor _,o in pairs(workspace:GetDescendants())do if o:IsA("BasePart")and o.Name~="Baseplate"then o.Transparency=0.7 end end',
+                
+                fullbright: '-- Full Bright\\nlocal l=game:GetService("Lighting");l.Brightness=2;l.ClockTime=14;l.FogEnd=100000;l.GlobalShadows=false;l.OutdoorAmbient=Color3.fromRGB(128,128,128)',
+                
+                antikick: '-- Anti Kick\\nlocal mt=getrawmetatable(game);setreadonly(mt,false);local old=mt.__namecall;mt.__namecall=newcclosure(function(self,...)local m=getnamecallmethod();if m=="Kick"then return end;return old(self,...)end);setreadonly(mt,true)',
+                
+                antiafk: '-- Anti AFK\\nlocal v=game:GetService("VirtualUser");game:GetService("Players").LocalPlayer.Idled:Connect(function()v:CaptureController();v:ClickButton2(Vector2.new())end)',
+                
+                chat: '-- Chat Spam\\nlocal e=false;local msg="Hello!";local d=1;local g=Instance.new("ScreenGui");local t=Instance.new("TextButton");g.Parent=game.CoreGui;t.Parent=g;t.Size=UDim2.new(0,150,0,50);t.Position=UDim2.new(0.5,-75,0.3,0);t.Text="Spam: OFF";t.TextColor3=Color3.fromRGB(255,255,255);t.MouseButton1Click:Connect(function()e=not e;t.Text=e and "Spam: ON" or "Spam: OFF"end);spawn(function()while wait(d)do if e then game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(msg,"All")end end end)',
+                
+                autofarm: '-- Auto Farm\\nlocal e=false;local p=game.Players.LocalPlayer;local g=Instance.new("ScreenGui");local t=Instance.new("TextButton");g.Parent=game.CoreGui;t.Parent=g;t.Size=UDim2.new(0,150,0,50);t.Position=UDim2.new(0.5,-75,0.4,0);t.Text="Farm: OFF";t.TextColor3=Color3.fromRGB(255,255,255);t.MouseButton1Click:Connect(function()e=not e;t.Text=e and "Farm: ON" or "Farm: OFF"end);spawn(function()while wait(0.1)do if e then for _,c in pairs(workspace:GetDescendants())do if c.Name:lower():match("coin")and c:IsA("BasePart")then if p.Character and p.Character:FindFirstChild("HumanoidRootPart")then c.CFrame=p.Character.HumanoidRootPart.CFrame end end end end end end)'
+            };
+            return db[tipo] || '-- Script não encontrado';
+        }
+
+        function gerarScript() {
+            const input = document.getElementById('prompt').value.toLowerCase().trim();
+            const output = document.getElementById('output');
+            const loading = document.getElementById('loading');
+            
+            if (!input) {
+                alert('❌ Digite algo!');
+                return;
+            }
+            
+            loading.classList.add('active');
+            output.value = '';
+            
+            setTimeout(() => {
+                let tipo = '';
+                if (input.includes('speed')) tipo = 'speed';
+                else if (input.includes('fly')) tipo = 'fly';
+                else if (input.includes('teleport') || input.includes('tp')) tipo = 'teleport';
+                else if (input.includes('esp') && !input.includes('wall')) tipo = 'esp';
+                else if (input.includes('god')) tipo = 'god';
+                else if (input.includes('noclip')) tipo = 'noclip';
+                else if (input.includes('jump')) tipo = 'jump';
+                else if (input.includes('aim')) tipo = 'aimbot';
+                else if (input.includes('btools') || input.includes('building')) tipo = 'btools';
+                else if (input.includes('kill')) tipo = 'killaura';
+                else if (input.includes('wall')) tipo = 'wallhack';
+                else if (input.includes('xray') || input.includes('x-ray')) tipo = 'xray';
+                else if (input.includes('bright') || input.includes('full')) tipo = 'fullbright';
+                else if (input.includes('kick')) tipo = 'antikick';
+                else if (input.includes('afk')) tipo = 'antiafk';
+                else if (input.includes('chat') || input.includes('spam')) tipo = 'chat';
+                else if (input.includes('farm') || input.includes('auto')) tipo = 'autofarm';
+                
+                output.value = getScript(tipo).replace(/\\n/g, '\n');
+                loading.classList.remove('active');
+            }, 800);
+        }
+
+        function copiarScript() {
+            const output = document.getElementById('output');
+            if (!output.value) {
+                alert('❌ Nada para copiar!');
+                return;
+            }
+            output.select();
+            document.execCommand('copy');
+            alert('✅ Copiado!');
+        }
+
+        function baixarScript() {
+            const output = document.getElementById('output');
+            if (!output.value) {
+                alert('❌ Nada para baixar!');
+                return;
+            }
+            const blob = new Blob([output.value], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'script.lua';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        function limparTudo() {
+            document.getElementById('prompt').value = '';
+            document.getElementById('output').value = '';
+        }
+    </script>
+</body>
+</html>
